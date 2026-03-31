@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schanne Sells & Rental | TCR Compliant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: { DEFAULT: '#c9a96e', light: '#e2c99a', dim: '#8a6e43' },
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'serif'],
+            sans:  ['Outfit', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Outfit', sans-serif; }
+    h1,h2,h3,h4 { font-family: 'Playfair Display', serif; }
+
+    /* Grain overlay */
+    body::before {
+      content:''; position:fixed; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events:none; z-index:9999; opacity:0.55;
+    }
+
+    /* Reveal */
+    .reveal { opacity:0; transform:translateY(28px); transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .d1{transition-delay:.10s} .d2{transition-delay:.22s} .d3{transition-delay:.34s} .d4{transition-delay:.46s}
+
+    /* Floating labels */
+    .fl-wrap { position:relative; margin-bottom:2.25rem; }
+    .fl-input { display:block; width:100%; background:transparent; border:none; border-bottom:0.5px solid #6b6257; padding:14px 0; font-family:'Outfit',sans-serif; font-size:15px; font-weight:300; color:#f0ebe2; outline:none; caret-color:#c9a96e; transition:border-color .3s; }
+    .fl-input::placeholder { color:transparent; }
+    .fl-input:focus { border-bottom-color:#c9a96e; }
+    .fl-input:focus + .fl-label,
+    .fl-input:not(:placeholder-shown) + .fl-label { top:-12px; font-size:9px; letter-spacing:.25em; color:#c9a96e; }
+    .fl-label { position:absolute; left:0; top:14px; font-size:11px; color:#a89d8c; letter-spacing:.2em; text-transform:uppercase; transition:all .3s; pointer-events:none; }
+    .fl-line { position:absolute; bottom:0; left:0; height:1px; width:100%; background:#c9a96e; transform:scaleX(0); transform-origin:left; transition:transform .4s ease; }
+    .fl-input:focus ~ .fl-line,
+    .fl-input:not(:placeholder-shown) ~ .fl-line { transform:scaleX(1); }
+
+    /* Checkbox */
+    .tcr-check { appearance:none; width:18px; height:18px; min-width:18px; border:0.5px solid #6b6257; background:transparent; cursor:pointer; position:relative; transition:border-color .3s; flex-shrink:0; }
+    .tcr-check:checked { border-color:#c9a96e; background:#c9a96e; }
+    .tcr-check:checked::after { content:''; position:absolute; left:4px; top:1px; width:6px; height:10px; border:2px solid #0c0b0a; border-top:none; border-left:none; transform:rotate(45deg); }
+
+    /* Nav frosted */
+    nav.scrolled { background:rgba(12,11,10,0.92)!important; backdrop-filter:blur(12px); padding-top:18px!important; padding-bottom:18px!important; border-bottom:0.5px solid rgba(201,169,110,0.15); }
+
+    /* Scroll line pulse */
+    @keyframes glow { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .scroll-line { width:0.5px; height:60px; background:linear-gradient(to bottom,#c9a96e,transparent); animation:glow 2s infinite; }
+
+    /* Gold HR */
+    .gold-hr { height:0.5px; background:linear-gradient(90deg,transparent,#c9a96e,transparent); border:none; margin:0; }
+
+    /* Toast */
+    .toast { position:fixed; bottom:40px; right:40px; background:#1a1814; border:0.5px solid #c9a96e; padding:20px 28px; font-size:13px; color:#f0ebe2; z-index:9998; transform:translateY(80px); opacity:0; transition:all .4s cubic-bezier(0.22,1,0.36,1); pointer-events:none; }
+    .toast.show { transform:translateY(0); opacity:1; }
+  </style>
+</head>
+<body class="antialiased bg-[#0c0b0a] text-[#f0ebe2] font-light overflow-x-hidden">
+
+  <nav id="nav" class="fixed top-0 left-0 right-0 z-50 py-7 transition-all duration-500">
+    <div class="max-w-6xl mx-auto px-8 md:px-12 flex justify-between items-center">
+      <a href="#hero" class="font-serif text-[17px] tracking-wide text-[#f0ebe2] no-underline">
+        Schanne Sells<span class="text-gold"> & </span>Rental
+      </a>
+      <ul class="hidden md:flex gap-10 list-none m-0 p-0">
+        <li><a href="#services"   class="text-[10px] uppercase tracking-[0.25em] text-[#a89d8c] hover:text-gold transition-colors no-underline">Services</a></li>
+        <li><a href="#contact"    class="text-[10px] uppercase tracking-[0.25em] text-[#a89d8c] hover:text-gold transition-colors no-underline">Contact</a></li>
+        <li><a href="#policy"     class="text-[10px] uppercase tracking-[0.25em] text-[#a89d8c] hover:text-gold transition-colors no-underline">Policy</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section id="hero" class="relative min-h-screen flex flex-col justify-end pb-24 pt-40 overflow-hidden">
+    <div class="absolute top-[-200px] right-[-200px] w-[700px] h-[700px] pointer-events-none" style="background:radial-gradient(circle,rgba(201,169,110,0.06) 0%,transparent 65%)"></div>
+    <div class="absolute bottom-0 left-0 right-0 h-px" style="background:linear-gradient(90deg,transparent,rgba(201,169,110,0.28),transparent)"></div>
+    <div class="max-w-6xl mx-auto px-8 md:px-12 w-full">
+      <div class="reveal flex items-center gap-4 mb-8">
+        <span class="block w-10 h-px bg-gold flex-shrink-0"></span>
+        <span class="text-[10px] uppercase tracking-[0.3em] text-gold">TCR Compliant · Est. 2026</span>
+      </div>
+      <h1 class="reveal d1 font-serif leading-[0.95] tracking-tight text-[#f0ebe2] mb-12" style="font-size:clamp(52px,8vw,106px)">
+        Schanne Sells<br><em class="italic text-gold">&</em><br>Rental.
+      </h1>
+      <p class="reveal d2 text-base md:text-lg text-[#a89d8c] leading-relaxed mb-14 max-w-xl font-light">
+        Neutral, transparent management for property owners and tenants — built on trust, governed by the highest regulatory standards.
+      </p>
+      <div class="reveal d3 flex gap-6 flex-wrap items-center">
+        <a href="#contact"  class="inline-flex items-center px-10 py-[18px] bg-gold text-[#0c0b0a] text-[10px] uppercase tracking-[0.25em] font-semibold hover:bg-gold-light hover:-translate-y-0.5 transition-all no-underline">Submit a Request</a>
+        <a href="#services" class="inline-flex items-center px-8 py-[18px] border text-[10px] uppercase tracking-[0.25em] font-medium hover:text-gold hover:-translate-y-0.5 transition-all no-underline" style="border-color:rgba(201,169,110,0.28);color:#a89d8c">Learn More</a>
+      </div>
+    </div>
+    <div class="absolute bottom-12 right-12 flex flex-col items-center gap-3 text-[9px] uppercase tracking-[0.3em] text-[#6b6257]">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <div class="bg-[#131210]" style="border-top:0.5px solid rgba(201,169,110,0.15);border-bottom:0.5px solid rgba(201,169,110,0.15)">
+    <div class="max-w-6xl mx-auto px-8 md:px-12 py-12">
+      <div class="grid grid-cols-2 md:grid-cols-4" style="border-right:0.5px solid rgba(201,169,110,0.15)">
+        <div class="reveal text-center py-6 px-4" style="border-left:0.5px solid rgba(201,169,110,0.15)">
+          <span class="font-serif text-[40px] text-gold block leading-none mb-2">100%</span>
+          <span class="text-[10px] uppercase tracking-[0.2em] text-[#6b6257]">TCR Compliant</span>
+        </div>
+        <div class="reveal d1 text-center py-6 px-4" style="border-left:0.5px solid rgba(201,169,110,0.15)">
+          <span class="font-serif text-[40px] text-gold block leading-none mb-2">24/7</span>
+          <span class="text-[10px] uppercase tracking-[0.2em] text-[#6b6257]">Dedicated Support</span>
+        </div>
+        <div class="reveal d2 text-center py-6 px-4" style="border-left:0.5px solid rgba(201,169,110,0.15)">
+          <span class="font-serif text-[40px] text-gold block leading-none mb-2">0</span>
+          <span class="text-[10px] uppercase tracking-[0.2em] text-[#6b6257]">3rd Party Data Sharing</span>
+        </div>
+        <div class="reveal d3 text-center py-6 px-4" style="border-left:0.5px solid rgba(201,169,110,0.15)">
+          <span class="font-serif text-[40px] text-gold block leading-none mb-2">24/7</span>
+          <span class="text-[10px] uppercase tracking-[0.2em] text-[#6b6257]">Opt-Out Honored</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="services" class="py-28 bg-[#0c0b0a]">
+    <div class="max-w-6xl mx-auto px-8 md:px-12">
+      <div class="reveal flex items-center gap-4 mb-5"><span class="block w-7 h-px bg-gold flex-shrink-0"></span><span class="text-[10px] uppercase tracking-[0.3em] text-gold">What We Offer</span></div>
+      <h2 class="reveal d1 font-serif text-[#f0ebe2] mb-6" style="font-size:clamp(36px,4.5vw,58px)">Our Services</h2>
+      <p class="reveal d2 text-[15px] text-[#a89d8c] leading-relaxed max-w-xl mb-16">End-to-end rental coordination designed to protect all parties while maintaining full regulatory compliance throughout every interaction.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-[rgba(201,169,110,0.15)]">
+        <div class="reveal bg-[#0c0b0a] hover:bg-[#1a1814] transition-colors p-12">
+          <div class="font-serif text-[13px] text-[#8a6e43] tracking-widest mb-7">01</div>
+          <div class="font-serif text-2xl text-[#f0ebe2] mb-4">Worker Scheduling</div>
+          <p class="text-sm text-[#a89d8c] leading-relaxed">Coordinating assignment of workers to properties with documented scheduling, confirmations, and audit trails for every engagement.</p>
+        </div>
+        <div class="reveal d1 bg-[#0c0b0a] hover:bg-[#1a1814] transition-colors p-12">
+          <div class="font-serif text-[13px] text-[#8a6e43] tracking-widest mb-7">02</div>
+          <div class="font-serif text-2xl text-[#f0ebe2] mb-4">Rental Verification</div>
+          <p class="text-sm text-[#a89d8c] leading-relaxed">Independent third-party verification of rental agreements, occupancy statuses, and tenant records to ensure accuracy and transparency.</p>
+        </div>
+        <div class="reveal d2 bg-[#0c0b0a] hover:bg-[#1a1814] transition-colors p-12">
+          <div class="font-serif text-[13px] text-[#8a6e43] tracking-widest mb-7">03</div>
+          <div class="font-serif text-2xl text-[#f0ebe2] mb-4">SMS Coordination</div>
+          <p class="text-sm text-[#a89d8c] leading-relaxed">Compliant informational SMS updates on rental request status — opt-in only, STOP anytime, zero marketing use of contact data.</p>
+        </div>
+        <div class="reveal d3 bg-[#0c0b0a] hover:bg-[#1a1814] transition-colors p-12">
+          <div class="font-serif text-[13px] text-[#8a6e43] tracking-widest mb-7">04</div>
+          <div class="font-serif text-2xl text-[#f0ebe2] mb-4">Dispute Resolution</div>
+          <p class="text-sm text-[#a89d8c] leading-relaxed">Neutral mediation between landlords and tenants, with full documentation and transparent communication records retained securely.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="gold-hr"/>
+
+  <section id="contact" class="py-28 bg-[#0c0b0a]">
+    <div class="max-w-6xl mx-auto px-8 md:px-12">
+      <div class="reveal flex items-center gap-4 mb-5"><span class="block w-7 h-px bg-gold flex-shrink-0"></span><span class="text-[10px] uppercase tracking-[0.3em] text-gold">Get In Touch</span></div>
+      <h2 class="reveal d1 font-serif text-[#f0ebe2] mb-6" style="font-size:clamp(36px,4.5vw,58px)">Coordination Request</h2>
+      <p class="reveal d2 text-[15px] text-[#a89d8c] leading-relaxed max-w-xl mb-16">Submit your details below to initiate a rental coordination inquiry. Our team operates during standard business hours.</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-20 xl:gap-24 items-start">
+        <div>
+          <div class="reveal py-7" style="border-top:0.5px solid rgba(201,169,110,0.15)">
+            <div class="text-[9px] uppercase tracking-[0.28em] text-[#8a6e43] mb-2">Direct Line</div>
+            <div class="font-serif text-xl text-[#f0ebe2]">+1 703 637 1384</div>
+          </div>
+          <div class="reveal d1 py-7" style="border-top:0.5px solid rgba(201,169,110,0.15)">
+            <div class="text-[9px] uppercase tracking-[0.28em] text-[#8a6e43] mb-2">Location</div>
+            <div class="font-serif text-xl text-[#f0ebe2]">New Jersey-United States</div>
+          </div>
+          <div class="reveal d2 py-7" style="border-top:0.5px solid rgba(201,169,110,0.15)">
+            <div class="text-[9px] uppercase tracking-[0.28em] text-[#8a6e43] mb-2">Hours</div>
+            <div class="font-serif text-xl text-[#f0ebe2]">Mon – Fri, 9am – 6pm</div>
+          </div>
+          <div class="reveal d3 py-7" style="border-top:0.5px solid rgba(201,169,110,0.15);border-bottom:0.5px solid rgba(201,169,110,0.15)">
+            <div class="text-[9px] uppercase tracking-[0.28em] text-[#8a6e43] mb-3">SMS Program</div>
+            <div class="text-[15px] font-light text-[#a89d8c] leading-relaxed">
+              Reply <strong class="text-gold font-medium">STOP</strong> to opt out · Reply <strong class="text-gold font-medium">HELP</strong> for assistance<br>
+              Msg &amp; data rates may apply · Frequency varies
+            </div>
+          </div>
+        </div>
+
+        <form id="contact-form" class="reveal">
+          <div class="fl-wrap">
+            <input type="text"  id="f-name"  class="fl-input" placeholder="Full Name"     required autocomplete="name">
+            <label for="f-name"  class="fl-label">Full Name</label>
+            <div class="fl-line"></div>
+          </div>
+          <div class="fl-wrap">
+            <input type="tel"   id="f-phone" class="fl-input" placeholder="Mobile Number" required autocomplete="tel">
+            <label for="f-phone" class="fl-label">Mobile Number</label>
+            <div class="fl-line"></div>
+          </div>
+          <div class="fl-wrap">
+            <input type="email" id="f-email" class="fl-input" placeholder="Email Address" autocomplete="email">
+            <label for="f-email" class="fl-label">Email Address (optional)</label>
+            <div class="fl-line"></div>
+          </div>
+
+          <div class="relative bg-[#252219] p-7 mb-9" style="border:0.5px solid rgba(201,169,110,0.28)">
+            <span class="absolute -top-[10px] left-5 bg-[#252219] px-2 text-[9px] uppercase tracking-[0.25em] text-gold">SMS Consent</span>
+            <div class="flex gap-4 items-start">
+              <input type="checkbox" id="sms-consent" class="tcr-check mt-0.5">
+              <label for="sms-consent" class="text-[11px] text-[#a89d8c] leading-relaxed tracking-wide">
+                <strong class="text-[#f0ebe2] font-medium">Optional:</strong> I consent to receive informational SMS messages regarding my rental coordination request from Schanne Sells & Rental at the number provided. Message frequency varies. Msg &amp; data rates may apply. Reply <strong class="text-gold">STOP</strong> to opt out at any time. Reply <strong class="text-gold">HELP</strong> for help. View our <a href="#policy" class="text-gold hover:underline">Privacy Policy</a> and <a href="#policy" class="text-gold hover:underline">Terms of Service</a>.
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-5 bg-gold text-[#0c0b0a] font-semibold text-[10px] uppercase tracking-[0.28em] border-none cursor-pointer hover:bg-gold-light hover:-translate-y-0.5 transition-all">Send Inquiry</button>
+          <p class="mt-5 text-[11px] text-[#6b6257] text-center leading-relaxed">Your information is used solely for rental coordination purposes.<br>No data is shared with third parties for marketing.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="policy" class="py-24 bg-[#131210]">
+    <div class="max-w-6xl mx-auto px-8 md:px-12">
+      <div class="reveal flex items-center gap-4 mb-5"><span class="block w-7 h-px bg-gold flex-shrink-0"></span><span class="text-[10px] uppercase tracking-[0.3em] text-gold">Legal</span></div>
+      <h2 class="reveal d1 font-serif text-[#f0ebe2] mb-16" style="font-size:clamp(36px,4.5vw,58px)">Privacy &amp; SMS Policy</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-[rgba(201,169,110,0.15)] mb-px">
+        <div class="reveal bg-[#131210] p-11">
+          <div class="font-serif text-[19px] text-[#f0ebe2] mb-4 pb-4" style="border-bottom:0.5px solid rgba(201,169,110,0.15)">Information Use</div>
+          <div class="text-[12.5px] text-[#a89d8c] leading-[1.9] space-y-3">
+            <p>Information collected via this website is used solely for rental coordination purposes. We do not use your information for unsolicited marketing campaigns, and we do not sell, rent, or lease contact information to any third party.</p>
+            <p>Data collected includes name, phone number, and optional email address, processed only in connection with your coordination request and retained in accordance with applicable legal requirements.</p>
+          </div>
+        </div>
+        <div class="reveal d1 bg-[#131210] p-11">
+          <div class="font-serif text-[19px] text-[#f0ebe2] mb-4 pb-4" style="border-bottom:0.5px solid rgba(201,169,110,0.15)">SMS &amp; Carrier Compliance</div>
+          <div class="text-[12.5px] text-[#a89d8c] leading-[1.9] space-y-3">
+            <p>No mobile information will be shared with third parties or affiliates for marketing or promotional purposes. All other categories exclude text messaging originator opt-in data and consent; this information will not be shared with any third parties.</p>
+            <p>Our SMS program is registered with The Campaign Registry (TCR) and compliant with all carrier guidelines and TCPA requirements. Opt-in is voluntary and may be revoked at any time by replying STOP.</p>
+          </div>
+        </div>
+        <div class="reveal d2 bg-[#131210] p-11">
+          <div class="font-serif text-[19px] text-[#f0ebe2] mb-4 pb-4" style="border-bottom:0.5px solid rgba(201,169,110,0.15)">Your Rights</div>
+          <div class="text-[12.5px] text-[#a89d8c] leading-[1.9] space-y-3">
+            <p>You have the right to access, correct, or request deletion of your personal information at any time. To exercise these rights, contact us at the number listed on this page.</p>
+            <p>Opt-out requests via STOP are processed immediately. No further SMS messages will be sent after an opt-out, except for a single confirmation. You may re-subscribe at any time by replying START.</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-[rgba(201,169,110,0.15)] p-px">
+        <div class="bg-[#131210] px-10 py-9 flex flex-wrap gap-10 items-center justify-between">
+          <p class="text-[11px] text-[#6b6257] max-w-xl leading-relaxed">By submitting a coordination request, you acknowledge you have read and agree to this Privacy &amp; SMS Policy. This policy may be updated periodically; continued use of the service constitutes acceptance of the updated terms.</p>
+          <div class="flex gap-6 flex-wrap">
+            <a href="#policy" class="text-[10px] uppercase tracking-[0.2em] text-[#a89d8c] hover:text-gold transition-colors no-underline">Privacy Policy</a>
+            <a href="#policy" class="text-[10px] uppercase tracking-[0.2em] text-[#a89d8c] hover:text-gold transition-colors no-underline">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-[#0c0b0a] pt-16 pb-10" style="border-top:0.5px solid rgba(201,169,110,0.15)">
+    <div class="max-w-6xl mx-auto px-8 md:px-12">
+      <div class="flex flex-wrap justify-between items-start gap-10 mb-14">
+        <div>
+          <div class="font-serif text-[22px] text-[#f0ebe2]">Schanne Sells<span class="text-gold"> & </span>Rental</div>
+          <div class="text-[11px] text-[#6b6257] uppercase tracking-[0.15em] mt-2">Professional Coordination Services</div>
+        </div>
+        <div class="flex gap-8 flex-wrap">
+          <a href="#services"   class="text-[10px] uppercase tracking-[0.2em] text-[#a89d8c] hover:text-gold transition-colors no-underline">Services</a>
+          <a href="#contact"    class="text-[10px] uppercase tracking-[0.2em] text-[#a89d8c] hover:text-gold transition-colors no-underline">Contact</a>
+          <a href="#policy"     class="text-[10px] uppercase tracking-[0.2em] text-[#a89d8c] hover:text-gold transition-colors no-underline">Privacy</a>
+          <a href="#policy"     class="text-[10px] uppercase tracking-[0.2em] text-[#a89d8c] hover:text-gold transition-colors no-underline">Terms</a>
+        </div>
+      </div>
+      <div class="pt-8 flex flex-wrap justify-between items-center gap-4" style="border-top:0.5px solid rgba(201,169,110,0.15)">
+        <div class="text-[11px] text-[#6b6257]">&copy; 2026 Schanne Sells & Rental. All rights reserved.</div>
+        <div class="inline-flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] text-[#8a6e43] px-4 py-2" style="border:0.5px solid rgba(201,169,110,0.15)">
+          <span class="w-1.5 h-1.5 rounded-full bg-gold inline-block"></span>
+          TCR · TCPA · Campaign Registry Compliant
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">
+    <strong class="block text-gold text-[11px] uppercase tracking-[0.15em] mb-1">Request Received</strong>
+    We'll be in touch within one business day.
+  </div>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 60));
+
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    document.querySelectorAll('#hero .reveal').forEach((el, i) =>
+      setTimeout(() => el.classList.add('visible'), 200 + i * 160)
+    );
+
+    document.getElementById('contact-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 4200);
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>
